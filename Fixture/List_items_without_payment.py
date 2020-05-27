@@ -37,7 +37,7 @@ class FreeHelper:
         Lenght_buttons_objects = len(driver.find_elements_by_class_name(
             'info'))
         k = 0   # Кол-во всех тестов на странице
-        n = 0   # Кол-во тестов для которых есть доступ после авторизации
+        n = 0   # Кол-во тестов для которых есть доступ посте того как пользователь авторизуется
         for i in range(5, Lenght_buttons_objects):
             Text_buttons_objects = Buttons_objects[i].text
             Lesson_or_test = Text_buttons_objects.split()
