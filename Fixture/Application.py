@@ -1,8 +1,8 @@
 
 from selenium import webdriver
 from Fixture.Session import SessionHelper
-from Fixture.List_items_with_payments import PaidHelper
-from Fixture.List_items_without_payment import FreeHelper
+from Fixture.List_items_after_autorization import AfterAutorizationHelper
+from Fixture.List_items_before_autorization import BeforeAutorizationHelper
 from Fixture.Button_menu import ButtonMenuHelper
 
 
@@ -15,8 +15,8 @@ class Application:
         else:
             raise ValueError("Unrecognized browser %s" % browser)
         self.Session = SessionHelper(self)
-        self.List_items_with_payments = PaidHelper(self)
-        self.List_items_without_payments = FreeHelper(self)
+        self.List_items_after_autorization = AfterAutorizationHelper(self)
+        self.List_items_before_autorization = BeforeAutorizationHelper(self)
         self.Button_menu = ButtonMenuHelper(self)
         self.base_url = base_url
 
