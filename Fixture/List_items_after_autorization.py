@@ -279,18 +279,7 @@ class AfterAutorizationHelper:
         Object_selection = choice(Objects)
         Object_selection.click()
 
-    # нажимает видеокурсы-предмет
-    def Videocourse_subject(self):
-        driver = self.app.driver
-        Button_video_courses = driver.find_elements_by_class_name('masthead-menu__item_third')[1]
-        Button_video_courses.click()  # после нажатия возвращает на список предметов
-        if i < Lenght_buttons_objects:
-            All_subjects = driver.find_elements_by_class_name('subject-card')
-            Lenght_all_subjects = len(All_subjects)
-            for j in range(0, Lenght_all_subjects):
-                if Text_sub == All_subjects[j].text:
-                    Button_sub = All_subjects[j]
-            Button_sub.click()
+
 
     # оплата случайного урока/теста в одном предмете и возвращение на список предметов
     def Payment(self):

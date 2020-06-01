@@ -33,6 +33,6 @@ def stop(request):
     return fixture
 
 
-def pytest_addoption(parser):
+def pytest_addoption(parser): # дает возможность запустить тесты на нескольких браузерах
     parser.addoption("--browser", action="store", default="chrome")
     parser.addoption("--target", action="store", default="target.json")
