@@ -1,6 +1,6 @@
 
 
-# доступ к тестам с авторизацией и без оплаты
+# доступ к тестам с авторизацией, но без оплаты и проверки безопасности
 
 def test_opening_test_with_authorization_without_payment (app):
     app.Session.Log_in(Login = "vilas.gromov@mail.ru", Password = "rcvOn7BBrp")  # вход в ЛК
