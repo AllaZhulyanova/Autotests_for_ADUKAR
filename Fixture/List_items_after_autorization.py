@@ -8,9 +8,9 @@ class AfterAutorizationHelper:
     def List_items(self,TEXT):
         driver = self.app.driver
         number_all_paid_tests = 0 # общее кол-во платных тестов по всем предметам
-        number_all_paid_tests_with_access = 0  # общее кол-во платных тестов по всем предметам, которые имеют доступ
+        number_all_paid_tests_with_access = 0  # общее кол-во платных тестов по всем предметам с доступом
         number_all_free_tests = 0 # общее кол-во беслпатных тестов по всем предметам
-        number_all_free_tests_with_access = 0  # общее кол-во обеплатных тестов по всем предметам, которые имеют доступ
+        number_all_free_tests_with_access = 0  # общее кол-во бесплатных тестов по всем предметам с доступ
         All_tests = 0  # общее число тестов по всем предметам
         All_tests_with_access = 0  # доступ к общему числу тестов по всем предметам
         Items = driver.find_elements_by_class_name('subject-card')  # кнопка списка предметов
@@ -96,29 +96,29 @@ class AfterAutorizationHelper:
     # выбор уроков/тестов по порядку для платных тестов
     def List_of_paid_objects(self,TEXT):
         driver = self.app.driver
-        Sub = driver.find_element_by_tag_name('h1')
-        Text_sub = Sub.text  # название предмета
+        #Sub = driver.find_element_by_tag_name('h1')
+        Text_sub = driver.find_element_by_tag_name('h1').text  # название предмета
         kPaid = 0   # Кол-во всех разработанных уроков/тестов на странице
-        nPaid = 0   # Кол-во уроков/тестов для которых есть доступ после оплаты
+        nPaid = 0   # Кол-во уроков/тестов с доступ после оплаты
         Buttons_objects = driver.find_elements_by_class_name(
             'info')  # кнопка список уроков и тестов и еще 4 кпоки, есть атрибут текст
         Lenght_buttons_objects = len(Buttons_objects)
         for i in range(4, Lenght_buttons_objects):
             Text_buttons_objects = Buttons_objects[i].text  # название теста/урока
             Lesson_or_test = Text_buttons_objects.split()
-            if Lesson_or_test[0] == "ТЕСТ":
+            if Lesson_or_test[0] == TEXT and TEXT == "ТЕСТ":
                 Buttons_objects[i].click()
                 kPaid = kPaid + 1
-                Text_button = driver.find_element_by_id('testPurchaseBtn').text
-                if Text_button != "Перейти к оплате":
-                    print("Ошибка в доступе")
-                    print("Предмет:",Text_sub)
-                    print(Text_buttons_objects)
-                else:
+                Text_button = driver.find_element_by_id('testPurchaseBtn').text  # "Перейти к оплате"
+                if Text_button == "Перейти к оплате":
                     nPaid = nPaid + 1
-                Button_close = driver.find_elements_by_class_name('icon_close')[5]  # кнопка "Х"
-                Button_close.click()
-            if Lesson_or_test[0] == "УРОК":
+                    Button_close = driver.find_elements_by_class_name('icon_close')[5]  # кнопка "Х"
+                    Button_close.click()
+                else:
+                    print("Ошибка в доступе")
+                    print("Предмет:", Text_sub)
+                    print(Text_buttons_objects)
+            elif TEXT == Lesson_or_test[0] and TEXT == "УРОК":
                 Buttons_objects[i].click()
                 if len(driver.find_elements_by_class_name('test-button')) != 0:
                     kPaid = kPaid + 1
