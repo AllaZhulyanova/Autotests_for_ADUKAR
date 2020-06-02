@@ -3,7 +3,7 @@
 # доступ к тестам с авторизацией и оплатой, но без проверки безопасности
 
 def test_opening_test_with_authorization_without_payment (app):
-    app.Session.Log_in(Login = "ev.point10@mail.ru", Password = "8oH5O1oXug")  # вход в ЛК
+    app.Session.Log_in(Login = "ev.point17@mail.ru", Password = "mrhjgXjHZH")  # вход в ЛК
     app.Button_menu.Test_Button_Videocourses() # кнопка "Видеокурсы"
     app.List_items_after_autorization.List_of_paid_items(TEXT='ТЕСТ')
     result = app.List_items_after_autorization.All_subject_after_payment(TEXT='ТЕСТ')
