@@ -4,7 +4,7 @@ class AfterAutorizationHelper:
     def __init__(self,app):
         self.app = app
 
-    # выбор предмета по порядку с проверкой доступка к уроку/тесту без оплаты, проверки безопасности
+    # выбор предмета по порядку с проверкой доступка к уроку/TT без оплаты, проверки безопасности
     def List_items(self,TEXT):
         driver = self.app.driver
         number_all_paid_tests = 0 # общее кол-во платных тестов по всем предметам
@@ -99,17 +99,16 @@ class AfterAutorizationHelper:
         Text_sub = driver.find_element_by_tag_name('h1').text  # название предмета
         kPaid = 0   # Кол-во всех разработанных уроков/тестов на странице
         nPaid = 0   # Кол-во уроков/тестов с доступ после оплаты
-        Buttons_objects = driver.find_elements_by_class_name(
-            'info')  # кнопка список уроков и тестов и еще 4 кпоки, есть атрибут текст
-        Lenght_buttons_objects = len(Buttons_objects)
+        Lenght_buttons_objects = len(driver.find_elements_by_class_name('info'))
         for i in range(4, Lenght_buttons_objects):
+            Buttons_objects = driver.find_elements_by_class_name(
+                'info')  # кнопка список уроков и тестов и еще 4 кпоки, есть атрибут текст
             Text_buttons_objects = Buttons_objects[i].text  # название теста/урока
             Lesson_or_test = Text_buttons_objects.split()
             if TEXT == Lesson_or_test[0] and TEXT == "ТЕСТ":
                 Buttons_objects[i].click()
                 kPaid = kPaid + 1
-                Text_button_payment = driver.find_element_by_id('testPurchaseBtn').text  # "Перейти к оплате"
-                if Text_button_payment == "Перейти к оплате":
+                if driver.find_element_by_id('testPurchaseBtn').text == "Перейти к оплате":
                     nPaid = nPaid + 1
                     Button_close = driver.find_elements_by_class_name('icon_close')[5]  # кнопка "Х"
                     Button_close.click()
@@ -119,30 +118,30 @@ class AfterAutorizationHelper:
                     print(Text_buttons_objects)
             elif TEXT == Lesson_or_test[0] and TEXT == "УРОК":
                 Buttons_objects[i].click()
-                if len(driver.find_elements_by_class_name('test-button')) != 0:
-                    kPaid = kPaid + 1
-                    Link_name = driver.find_element_by_tag_name('iframe').get_attribute("src") # ссылка на видеоурок
-                    Button_TT = driver.find_elements_by_class_name('test-button')  # ТТ1/ТТ2
-                    if len(Link_name) == 0 and len(Button_TT) == 0:
-                        print("Ошибка в доступе")
-                        print("Предмет:", Text_sub)
-                        print(Text_buttons_objects)
-                    else:
-                        nPaid = nPaid + 1
-                            #Button_video_courses = driver.find_elements_by_class_name('masthead-menu__item_third')[1]
-                            #Button_video_courses.click()  # после нажатия возвращает на список предметов
-                            #if i < Lenght_buttons_objects:
-                             #   All_subjects = driver.find_elements_by_class_name('subject-card')
-                             #   Lenght_all_subjects = len(All_subjects)
-                             #   for j in range(0, Lenght_all_subjects):
-                             #       if Text_sub == All_subjects[j].text:
-                             #           Button_sub = All_subjects[j]
-                             #   Button_sub.click()
+                driver.implicitly_wait(1)
+                if len(driver.find_elements_by_class_name('test-button')) != 0 and len(
+                        driver.find_element_by_tag_name('iframe').get_attribute("src")):
+                    Lenght_buttons_TT = len(driver.find_elements_by_class_name('test-button'))
+                    for j in range(0, Lenght_buttons_TT):
+                        Button_TT = driver.find_elements_by_class_name('test-button')  # ТТ1/ТТ2
+                        Button_TT[j].click()
+                        kPaid = kPaid + 1
+                        if driver.find_element_by_id('testPurchaseBtn').text == "Перейти к оплате":
+                            nPaid = nPaid + 1
+                            driver.back()
+                            Buttons_objects = driver.find_elements_by_class_name('info')
+                            Buttons_objects[i].click()
+                        else:
+                            print("Ошибка в доступе")
+                            print("Предмет:", Text_sub)
+                            print(Text_buttons_objects)
+                            print(Button_TT[j].text)
+                        Lenght_buttons_TT = len(driver.find_elements_by_class_name('test-button'))
+                    Button_back = driver.find_element_by_class_name('icon_back')  # кнопка <- АДУКАР
+                    Button_back.click()
             else:
                 pass
-            Buttons_objects = driver.find_elements_by_class_name(
-                'info')  # кнопка список уроков и тестов и еще 4 кпоки, есть атрибут текст
-            Lenght_buttons_objects = len(Buttons_objects)
+            Lenght_buttons_objects = len(driver.find_elements_by_class_name('info'))
         return kPaid,nPaid
 
     # выбор уроков/ТТ по порядку для бесплатных предметов: английский, биология
@@ -151,54 +150,44 @@ class AfterAutorizationHelper:
         Text_sub = driver.find_element_by_tag_name('h1').text  # название предмета
         kFree = 0   # Кол-во всех разработанных уроков/тестов на странице
         nFree = 0   # Кол-во уроков/тестов для которых есть доступ после оплаты
-        Buttons_objects = driver.find_elements_by_class_name(
-            'info')  # кнопка список уроков и тестов и еще 4 кпоки, есть атрибут текст
-        Lenght_buttons_objects = len(Buttons_objects)
+        Lenght_buttons_objects = len(driver.find_elements_by_class_name('info'))
         for i in range(4, Lenght_buttons_objects):
+            Buttons_objects = driver.find_elements_by_class_name('info')  # кнопка список уроков и тестов и еще 4 кпоки, есть атрибут текст
             Text_buttons_objects = Buttons_objects[i].text
             Lesson_or_test = Text_buttons_objects.split()
             if TEXT == Lesson_or_test[0] and TEXT == 'ТЕСТ':
                 Buttons_objects[i].click()
                 kFree = kFree + 1
-                Text_button_security = driver.find_element_by_css_selector('p.not-found__title').text
-                if Text_button_security == 'Проверка безопасности':
+                if driver.find_element_by_css_selector('p.not-found__title').text == 'Проверка безопасности':
                     nFree = nFree + 1
                     driver.back()
-                    #Button_video_courses = driver.find_elements_by_class_name('masthead-menu__item_third')[1]
-                    #Button_video_courses.click()  # после нажатия возвращает на список предметов
-                    #if i < Lenght_buttons_objects:
-                    #    All_subjects = driver.find_elements_by_class_name('subject-card')
-                    #    Lenght_all_subjects = len(All_subjects)
-                    #   for j in range(0,Lenght_all_subjects):
-                    #        if Text_sub == All_subjects[j].text:
-                    #            Button_sub = All_subjects[j]
-                    #    Button_sub.click()
-                    #    Text_sub = driver.find_element_by_tag_name('h1').text  # название предмета
                 else:
                     print("Ошибка в доступе")
                     print("Предмет", Text_sub)
                     print(Text_buttons_objects)
-            elif TEXT == Lesson_or_test[0] and TEXT == 'ТЕСТ':
-                if len(driver.find_elements_by_class_name('test-button')) != 0:
-                    kFree = kFree + 1
-                    Link_name = driver.find_element_by_tag_name('iframe').get_attribute("src") # ссылка на видеоурок
-                    Button_TT = driver.find_elements_by_class_name('test-button')  # ТТ1/ТТ2
-                    if len(Link_name) == 0 and len(Button_TT) == 0:
-                        print("Предмет:", Text_sub)
-                        print(Text_buttons_objects)
-                    else:
-                        nFree = nFree + 1
-                            #Button_video_courses = driver.find_elements_by_class_name('masthead-menu__item_third')[1]
-                            #Button_video_courses.click()  # после нажатия возвращает на список предметов
-                            #if i < Lenght_buttons_objects:
-                             #   All_subjects = driver.find_elements_by_class_name('subject-card')
-                             #   Lenght_all_subjects = len(All_subjects)
-                             #   for j in range(0, Lenght_all_subjects):
-                             #       if Text_sub == All_subjects[j].text:
-                             #           Button_sub = All_subjects[j]
-                              #  Button_sub.click()
-            Buttons_objects = driver.find_elements_by_class_name('info')
-            Lenght_buttons_objects = len(Buttons_objects)
+            elif TEXT == Lesson_or_test[0] and TEXT == 'УРОК':
+                Buttons_objects[i].click()
+                driver.implicitly_wait(1)
+                if len(driver.find_elements_by_class_name('test-button')) != 0 and len(
+                        driver.find_element_by_tag_name('iframe').get_attribute("src")):
+                    Lenght_buttons_TT = len(driver.find_elements_by_class_name('test-button'))
+                    for j in range(0, Lenght_buttons_TT):
+                        Button_TT = driver.find_elements_by_class_name('test-button')  # ТТ1/ТТ2
+                        Button_TT[j].click()
+                        kFree = kFree + 1
+                        if driver.find_element_by_css_selector('p.not-found__title').text == 'Проверка безопасности':
+                            nFree = nFree + 1
+                            driver.back()
+                        else:
+                            print("Ошибка в доступе")
+                            print("Предмет:", Text_sub)
+                            print(Text_buttons_objects)
+                        Lenght_buttons_TT = len(driver.find_elements_by_class_name('test-button'))
+                    Button_back = driver.find_element_by_class_name('icon_back')  # кнопка <- АДУКАР
+                    Button_back.click()
+            else:
+                pass
+            Lenght_buttons_objects = len(driver.find_elements_by_class_name('info'))
         return kFree,nFree
 
     # перебор всех предметов по порядку после оплаты
@@ -303,4 +292,3 @@ class AfterAutorizationHelper:
         Button_sms_code.send_keys('554306')  # ввод смс кода
         Button_OK = driver.find_element_by_id('btnTestCode')
         Button_OK.click()  # после нажатия вы войдете в тест
-

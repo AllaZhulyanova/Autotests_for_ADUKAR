@@ -101,6 +101,7 @@ class BeforeAutorizationHelper:
             Lesson_or_test = Text_buttons_objects.split()
             if Lesson_or_test[0] == 'УРОК':
                 Buttons_objects[i].click()
+                driver.implicitly_wait(1)
                 if len(driver.find_elements_by_class_name('test-button')) != 0 and len(driver.find_element_by_tag_name('iframe').get_attribute("src")):
                     Button_TT = driver.find_elements_by_class_name('test-button')  # ТТ1/ТТ2
                     Lenght_buttons_TT = len(Button_TT)
