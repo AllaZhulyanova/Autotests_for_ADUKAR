@@ -17,6 +17,7 @@ class SessionHelper:
         element = driver.find_element_by_name("password")
         element.send_keys(Password)
         element.send_keys(Keys.RETURN)
+        
 
 # Выход из личного кабинета
     def Log_out(self):
