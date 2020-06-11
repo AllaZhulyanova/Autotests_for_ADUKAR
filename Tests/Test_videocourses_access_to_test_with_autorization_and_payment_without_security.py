@@ -11,4 +11,4 @@ def test_opening_test_with_authorization_without_payment (app):
     app.Session.Log_out()  # выход из ЛК
     assert total_number_tests == total_number_tests_with_access
     print ("После успешного выполнения теста создать нового пользователя АДУКАР")
-    print('заменить логин и пароль в тесте Test_videocourses_access_to_tests_with_authorization.py')
+    print('заменить логин и пароль в тесте Test_videocourses_access_to_tests_with_authorization_and_payment_without_security.py')

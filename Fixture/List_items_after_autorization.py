@@ -63,7 +63,7 @@ class AfterAutorizationHelper:
         #return number_all_tests_after_security, number_all_tests_after_security_with_access
 
 
-    # выбор тестов/ТТ по порядку для платных предметов: русский, белорусский
+    # выбор тестов/ТТ по порядку
     def List_of_paid_and_free_objects(self,TEXT):
         driver = self.app.driver
         Text_sub = driver.find_element_by_tag_name('h1').text  # название предмета
@@ -114,57 +114,13 @@ class AfterAutorizationHelper:
                             print("Ошибка в доступе")
                             print("Предмет:", Text_sub)
                             print(Text_buttons_objects)
-                    #driver.implicitly_wait(1)
                     Button_back = driver.find_element_by_css_selector('span.icon.icon_back')  # кнопка <- АДУКАР
                     Button_back.click()
             else:
                 pass
         return kPaid,nPaid
 
-    # выбор уроков/ТТ по порядку для бесплатных предметов: английский, биология
-    def List_of_free_objects(self,TEXT):
-        driver = self.app.driver
-        Text_sub = driver.find_element_by_tag_name('h1').text  # название предмета
-        kFree = 0   # Кол-во всех разработанных уроков/тестов на странице
-        nFree = 0   # Кол-во уроков/тестов для которых есть доступ после оплаты
-        for i in range(4, len(driver.find_elements_by_class_name('info'))):
-            Buttons_objects = driver.find_elements_by_class_name('info')  # кнопка список уроков и тестов и еще 4 кпоки, есть атрибут текст
-            Text_buttons_objects = Buttons_objects[i].text
-            Lesson_or_test = Text_buttons_objects.split()
-            if TEXT == Lesson_or_test[0] and TEXT == 'ТЕСТ':
-                Buttons_objects[i].click()
-                kFree = kFree + 1
-                if driver.find_element_by_css_selector('p.not-found__title').text == 'Проверка безопасности':
-                    nFree = nFree + 1
-                    driver.back()
-                else:
-                    print("Ошибка в доступе")
-                    print("Предмет", Text_sub)
-                    print(Text_buttons_objects)
-            elif TEXT == Lesson_or_test[0] and TEXT == 'УРОК':
-                Buttons_objects[i].click()
-                driver.implicitly_wait(1)
-                if len(driver.find_elements_by_class_name('test-button')) != 0 and len(
-                        driver.find_elements_by_tag_name('iframe').get_attribute("src")): # убеждаемся, что урок разработан
-                    for j in range(0, len(driver.find_elements_by_class_name('test-button'))):
-                        Button_TT = driver.find_elements_by_class_name('test-button')  # ТТ1/ТТ2
-                        Button_TT[j].click()
-                        kFree = kFree + 1
-                        if driver.find_element_by_css_selector('p.not-found__title').text == 'Проверка безопасности':
-                            nFree = nFree + 1
-                            driver.back()
-                        else:
-                            print("Ошибка в доступе")
-                            print("Предмет:", Text_sub)
-                            print(Text_buttons_objects)
-                    Button_back = driver.find_element_by_class_name('icon_back')  # кнопка <- АДУКАР
-                    Button_back.click()
-            else:
-                pass
-        return kFree,nFree
-
-
-    # оплата тестов/ТТ по порядку
+       # оплата тестов/ТТ по порядку
     def Payment_objects(self,TEXT,Promo_for_payment):
         driver = self.app.driver
         kPaid = 0   # Кол-во всех разработанных уроков/тестов на странице
@@ -175,7 +131,6 @@ class AfterAutorizationHelper:
             Text_buttons_objects = Buttons_objects[i].text  # название теста/урока
             Lesson_or_test = Text_buttons_objects.split()
             if TEXT == Lesson_or_test[0] and TEXT == "ТЕСТ":
-                Buttons_object = Buttons_objects[i]
                 Text_sub = driver.find_element_by_tag_name('h1').text  # название предмета
                 Buttons_objects[i].click()
                 kPaid = kPaid + 1
@@ -183,6 +138,8 @@ class AfterAutorizationHelper:
                     if driver.find_element_by_id('testPurchaseBtn').text == "Перейти к оплате":
                         Button_payment = driver.find_element_by_id('testPurchaseBtn')  # кнопка "Перейти к оплате"
                         Button_payment.click()
+                        window_after = driver.window_handles[1]
+                        driver.switch_to.window(window_after)
                         payment_state = self.Payment(Promo_for_payment)
                         if payment_state == "оплачено":
                             nPaid = nPaid + 1
@@ -211,27 +168,45 @@ class AfterAutorizationHelper:
                 driver.implicitly_wait(1)
                 if len(driver.find_elements_by_class_name('test-button')) != 0 and len(
                         driver.find_element_by_tag_name('iframe').get_attribute("src")):
-                    Lenght_buttons_TT = len(driver.find_elements_by_class_name('test-button'))
-                    for j in range(0, Lenght_buttons_TT):
+                    for j in range(0, len(driver.find_elements_by_class_name('test-button'))):
                         Button_TT = driver.find_elements_by_class_name('test-button')  # ТТ1/ТТ2
                         Button_TT[j].click()
                         kPaid = kPaid + 1
-                        if driver.find_element_by_id('testPurchaseBtn').text == "Перейти к оплате":
-                            nPaid = nPaid + 1
-                            driver.back()
-                            Buttons_objects = driver.find_elements_by_class_name('info')
-                            Buttons_objects[i].click()
+                        if len(driver.find_elements_by_id('testPurchaseBtn')) != 0:
+                            if driver.find_element_by_id('testPurchaseBtn').text == "Перейти к оплате":
+                                link_name = driver.find_element_by_id('testPurchaseBtn').get_attribute(
+                                    "href")  # ссылка на оплату
+                                driver.execute_script("window.open('','_blank');") # создание пустой ссылки
+                                driver.switch_to.window(driver.window_handles[1]) # переход на пустую ссылку
+                                driver.get(link_name)  # запуск ссылки с оплатой в новой вкладке
+                                payment_state = self.Payment(Promo_for_payment)
+                                if payment_state == "оплачено":
+                                    nPaid = nPaid + 1
+                                else:
+                                    print("Статус оплаты", payment_state)
+                                    print("Предмет:", Text_sub)
+                                    print(Text_buttons_objects)
+                            else:
+                                print("Ошибка при оплате")
+                                print("Предмет:", Text_sub)
+                                print(Text_buttons_objects)
+                        elif len(driver.find_elements_by_css_selector('p.not-found__title')) != 0:
+                            if driver.find_element_by_css_selector(
+                                    'p.not-found__title').text == 'Проверка безопасности':
+                                nPaid = nPaid + 1
+                                driver.back()
+                            else:
+                                print("Ошибка в проверке безопасности")
+                                print("Предмет:", Text_sub)
+                                print(Text_buttons_objects)
                         else:
                             print("Ошибка в доступе")
                             print("Предмет:", Text_sub)
                             print(Text_buttons_objects)
-                            print(Button_TT[j].text)
-                        Lenght_buttons_TT = len(driver.find_elements_by_class_name('test-button'))
-                    Button_back = driver.find_element_by_class_name('icon_back')  # кнопка <- АДУКАР
+                    Button_back = driver.find_element_by_css_selector('span.icon.icon_back')  # кнопка <- АДУКАР
                     Button_back.click()
             else:
                 pass
-            Lenght_buttons_objects = len(driver.find_elements_by_class_name('info'))
         return kPaid,nPaid
 
 
@@ -239,8 +214,6 @@ class AfterAutorizationHelper:
     def Payment(self,Promo_for_payment):
         driver = self.app.driver
         window_before = driver.window_handles[0]
-        window_after = driver.window_handles[1]
-        driver.switch_to.window(window_after)
         Button_promocode = driver.find_elements_by_class_name('input')[0]
         Button_promocode.send_keys(Promo_for_payment) # ввод промокода
         Button_apply = driver.find_element_by_id('applyPromocode')
