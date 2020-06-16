@@ -274,7 +274,7 @@ class AfterAutorizationHelper:
                         Button_TT = driver.find_elements_by_class_name('test-button')  # ТТ1/ТТ2
                         Button_TT[j].click()
                         kTest = kTest + 1
-                        if len(driver.find_elements_by_id('testPurchaseBtn')) != 0:
+                        if len(driver.find_elements_by_id('testPurchaseBtn')) != 0:  # Перейти к оплате
                             if driver.find_element_by_id('testPurchaseBtn').text == "Перейти к оплате":
                                 link_name = driver.find_element_by_id('testPurchaseBtn').get_attribute(
                                     "href")  # ссылка на оплату
@@ -283,26 +283,35 @@ class AfterAutorizationHelper:
                                 driver.get(link_name)  # запуск ссылки с оплатой в новой вкладке
                                 payment_state = self.Test_payment(Promo_for_payment)
                                 if payment_state == "оплачено":
-                                    nTest = nTest + 1
+                                    Button_TT = driver.find_elements_by_class_name('test-button')  # ТТ1/ТТ2
+                                    Button_TT[j].click()
+                                    if len(driver.find_elements_by_css_selector('p.not-found__title')) != 0:
+                                        if driver.find_element_by_css_selector(
+                                                'p.not-found__title').text == 'Проверка безопасности':
+                                            security_state = self.Test_security(Phone, Sms_code)
+                                            if security_state != 0:
+                                                nTest = nTest + 1
+                                                driver.back()
+                                    else:
+                                        if len(driver.find_elements_by_css_selector("div.inner")) != 0:
+                                            nTest = nTest + 1
+                                            driver.back()
                                 else:
+                                    print("Пройти проверку безопасности без оплаты нет возможности")
                                     print("Статус оплаты", payment_state)
                                     print("Предмет:", Text_sub)
                                     print(Text_buttons_objects)
-                            else:
-                                print("Ошибка при оплате")
-                                print("Предмет:", Text_sub)
-                                print(Text_buttons_objects)
-                        elif len(driver.find_elements_by_css_selector('p.not-found__title')) != 0:
-                            if driver.find_element_by_css_selector(
-                                    'p.not-found__title').text == 'Проверка безопасности':
-                                nTest = nTest + 1
-                                driver.back()
-                            else:
-                                print("Ошибка в проверке безопасности")
-                                print("Предмет:", Text_sub)
-                                print(Text_buttons_objects)
+                        elif len(driver.find_elements_by_css_selector('p.not-found__title')) != 0: # Проверка безопасности
+                            if driver.find_element_by_css_selector('p.not-found__title').text == 'Проверка безопасности':
+                                security_state = self.Test_security(Phone, Sms_code)
+                                if security_state != 0:
+                                    nTest = nTest + 1
+                                    driver.back()
+                        elif len(driver.find_elements_by_css_selector("div.inner")) != 0:
+                            nTest = nTest + 1
+                            driver.back()
                         else:
-                            print("Ошибка в доступе")
+                            print("Ошибка в доступе при прохождении проверки безопасности")
                             print("Предмет:", Text_sub)
                             print(Text_buttons_objects)
                     Button_back = driver.find_element_by_css_selector('span.icon.icon_back')  # кнопка <- АДУКАР

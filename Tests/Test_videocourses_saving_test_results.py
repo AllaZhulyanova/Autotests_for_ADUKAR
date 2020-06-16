@@ -8,6 +8,8 @@ def test_opening_test_with_authorization_without_payment(app):
     #app.Session.Log_in(Login = "ev.point42@mail.ru", Password = "ZIurKR2Xch")  # вход в ЛК
     #app.Session.Log_in(Login = "ev.point43@mail.ru", Password = "YX0CF5eORO")  # вход в ЛК
     #app.Session.Log_in(Login = "ev.point44@mail.ru", Password = "lgkcDTYJ86")  # вход в ЛК
+    #app.Session.Log_in(Login = "ev.point49@mail.ru", Password = "qsYPVm8ny8")  # вход в ЛК
+    #app.Session.Log_in(Login = "ev.point47@mail.ru", Password = "dSuSTCGywO")  # вход в ЛК
     app.Button_menu.Test_Button_Videocourses() # кнопка "Видеокурсы"
     app.List_items_after_autorization.Test_saving_test_results(TEXT="ТЕСТ")
     #finish_test_results = test_results[0]
